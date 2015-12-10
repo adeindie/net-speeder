@@ -20,6 +20,7 @@
 
 void got_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *packet);
 void print_usage(void);
+int  print_sock_info(void);
 
 
 /*
@@ -88,6 +89,8 @@ int main(int argc, char **argv) {
 	
 	printf("ethernet header len:[%d](14:normal, 16:cooked)\n", ETHERNET_H_LEN);
 
+	if ( print_sock_info() != 0) return -1;
+
 	if (pcap_lookupnet(dev, &net, &mask, errbuf) == -1) {
 		printf("Couldn't get netmask for device %s: %s\n", dev, errbuf);
 		net = 0;
@@ -129,3 +132,27 @@ int main(int argc, char **argv) {
 	libnet_destroy(libnet_handler);
 	return 0;
 }
+
+int print_sock_info(){
+	int fd, snd_buf, rcv_buf;
+	socklen_t opt_len;
+
+	fd = socket(PF_INET, SOCK_DGRAM, 0);
+	if( -1 == fd){ fprintf(stderr, "create socket error:%s\n", strerror(errno)); return 1;}
+	int rs = 0;
+	opt_len = 1;
+	rs = getsockopt(fd, SOL_SOCKET, SO_SNDBUF, &snd_buf, &opt_len);
+	if( -1 == rs){ fprintf(stderr, "getsockopt errori:%s\n", strerror(errno) ); return 2;}
+
+	fprintf(stdout, "send buffer size:%d\n", snd_buf);
+
+	rs = getsockopt(fd, SOL_SOCKET, SO_RCVBUF, &rcv_buf, &opt_len);
+	if( -1 == rs){ fprintf(stderr, "getsockopt errori:%s\n", strerror(errno) ); return 3;}
+
+	fprintf(stdout, "recv buffer size:%d\n", rcv_buf);
+
+
+	return 0;
+}
+
+
