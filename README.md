@@ -17,6 +17,7 @@ A program to speed up single thread download upon long delay and unstable networ
 debian/ubuntu安装libnet：apt-get install libnet1
 
     安装libpcap： apt-get install libpcap0.8 
+    其他依赖: apt-get install -y bison flex libbison-dev libfl-dev m4 apt-get install libpcap0.8 libpcap0.8-dev libpcap-dev libnet1-dev
 
 编译需要安装libnet和libpcap对应的dev包 debian/ubuntu安装libnet-dev：apt-get install libnet1-dev
 
